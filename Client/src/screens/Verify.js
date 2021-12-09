@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FROM_NUMBER } from "../properties";
+import Header from "../components/Header";
 
 const fields = [
   {
@@ -12,7 +13,27 @@ const fields = [
   },
 ];
 
-const onSubmit = (event, navigate, params, notify) => {
+const errorToast = (message) =>
+  toast.error(message, {
+    position: "bottom-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+  });
+
+const successToast = (message) =>
+  toast.success(message, {
+    position: "bottom-center",
+    autoClose: 3000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+  });
+
+const onSubmit = (event, navigate, params) => {
   event.preventDefault();
   // parameters for verify/check API
   const request_id = params && params.request_id;
@@ -20,7 +41,10 @@ const onSubmit = (event, navigate, params, notify) => {
 
   // parameters for SMS API
   const phoneNumber = params && params.phoneNo;
-  const message = "Account succesfully verified!";
+  const name = params && params.name;
+  const message = `Dear ${
+    name && name === "null" ? "user" : name
+  }, you have successfully registered at Optho Clinic!`;
 
   let method = "POST";
   let headers = { "Content-Type": "application/json" };
@@ -40,24 +64,38 @@ const onSubmit = (event, navigate, params, notify) => {
       if (res.status === "0") {
         console.log("verify response is.....", res);
         // Send Successfull Message to the user
-        const requestBody = {
-          method: method,
-          headers: headers,
-          body: JSON.stringify({
-            virtualNumber: FROM_NUMBER,
-            toNumber: phoneNumber,
-            message: message,
-          }),
-        };
 
-        fetch("http://localhost:3000/send", requestBody).then((res) =>
-          res.json()
-        );
+        if (name !== "null") {
+          const requestBody = {
+            method: method,
+            headers: headers,
+            body: JSON.stringify({
+              virtualNumber: FROM_NUMBER,
+              toNumber: phoneNumber,
+              message: message,
+            }),
+          };
+
+          fetch("http://localhost:3000/send", requestBody)
+            .then((res) => res.json())
+            .then((res) => {
+              if (res.messages[0]["status"] === "0") {
+                successToast("You Phone Number is successfully verified!");
+                setTimeout(() => navigate(`/home/${phoneNumber}`), 1000);
+              } else {
+                errorToast("Something went wrong!");
+              }
+            })
+            .catch((err) => errorToast("Something went wrong!"));
+        } else {
+          successToast("You Phone Number is successfully verified!");
+          setTimeout(() => navigate(`/home/${phoneNumber}`), 2000);
+        }
+
         // Navigate to next page on success
-        navigate("/personal-details");
       } else {
         //   Display error message on screen
-        notify();
+        errorToast("Incorrect PIN!");
       }
     });
 };
@@ -65,24 +103,17 @@ const onSubmit = (event, navigate, params, notify) => {
 const Verify = () => {
   let navigate = useNavigate();
   let params = useParams();
-  const notify = () =>
-    toast.error("Incorrect PIN!", {
-      position: "bottom-center",
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
 
   return (
     <div>
+      <Header />
       <Form
         fields={fields}
-        onSubmit={(e) => onSubmit(e, navigate, params, notify)}
+        onSubmit={(e) => onSubmit(e, navigate, params)}
         buttonLabel={"Verify Me!"}
+        page={"verify"}
       />
-      <ToastContainer />
+      <ToastContainer style={{ width: "30%" }} />
     </div>
   );
 };

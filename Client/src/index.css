@@ -23,3 +23,28 @@ code {
   color: #fff !important;
   opacity: 0.3;
 }
+
+.MuiSvgIcon-root {
+  color: white;
+}
+
+.MuiDialog-paper {
+  width: 570px;
+  padding: 10px 50px 50px 50px;
+}
+
+.header {
+  font-size: 55px;
+  background: linear-gradient(-45deg, #3db3c5, #274685);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+  text-align: center;
+}
+
+.description {
+  font-size: 20px;
+  color: #f5f5f5;
+  font-style: italic;
+  text-align: center;
+}

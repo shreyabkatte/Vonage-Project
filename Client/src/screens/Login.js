@@ -1,6 +1,9 @@
 import React from "react";
 import Form from "../components/Form";
 import { FROM_NUMBER } from "../properties";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import Header from "../components/Header";
 
 const fields = [
   {
@@ -13,13 +16,24 @@ const fields = [
   },
 ];
 
-class Login extends React.Component {
-  onSubmit = (event) => {
+const Login = () => {
+  let navigate = useNavigate();
+
+  const errorToast = (message) =>
+    toast.error(message, {
+      position: "bottom-center",
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+
+  const onSubmit = (event, navigate) => {
     event.preventDefault();
-    console.log("=======>", event.target.elements[0].value);
     const phoneNumber = event.target.elements[0].value;
-    // const password = event.target.elements[1].value;
-    const message = "This is a sample message of login";
+    const message = "Login Success!";
+    // "Dear user, you have successfully logged in to your Optho Clinic account!";
 
     const requestBody = {
       method: "POST",
@@ -31,21 +45,29 @@ class Login extends React.Component {
       }),
     };
 
+    // navigate(`/home/${phoneNumber}`);
+
     fetch("http://localhost:3000/send", requestBody)
       .then((res) => res.json())
-      .then((res) => this.setState({ apiResponse: res }));
+      .then(setTimeout(() => navigate(`/home/${phoneNumber}`), 1000))
+      .catch((err) =>
+        errorToast("Something went wrong while sending message!")
+      );
   };
 
-  render() {
-    return (
+  return (
+    <div>
+      <ToastContainer style={{ width: "30%" }} />
+      <Header />
       <Form
         fields={fields}
-        onSubmit={this.onSubmit}
+        onSubmit={(e) => onSubmit(e, navigate)}
         buttonLabel={"Login"}
-        linkTo="abc"
+        // linkTo="abc"
+        page={"login"}
       />
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default Login;

@@ -4,6 +4,8 @@ import Register from "./screens/Register";
 import Login from "./screens/Login";
 import Verify from "./screens/Verify";
 import PersonalDetails from "./screens/PersonalDetails";
+import Home from "./screens/Home";
+import LandingPage from "./screens/LandingPage";
 import SuccessScreen from "./screens/SuccessScreen";
 
 const appStyle = {
@@ -11,7 +13,8 @@ const appStyle = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  background: "linear-gradient(-45deg, #cc2b5e ,#753a88)",
+  background: "linear-gradient(-45deg, #ffafbd ,#ffc3a0)",
+  // #ffafbd → #ffc3a0
 };
 
 // const Field = React.forwardRef(({label, type}, ref) => {
@@ -71,11 +74,16 @@ const App = () => {
           </nav>
           <hr /> */}
         <Routes>
-          <Route path="/" element={<Register />} />
+          <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
-          <Route path="verify/:phoneNo/:request_id" element={<Verify />} />
-          <Route path="verify" element={<Verify />} />
+          <Route
+            path="verify/:phoneNo/:request_id/:name"
+            element={<Verify />}
+          />
+          {/* <Route path="verify/:phoneNo" element={<Verify />} /> */}
           <Route path="personal-details" element={<PersonalDetails />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="home/:phoneNo" element={<Home />} />
           <Route path="success" element={<SuccessScreen />} />
         </Routes>
       </div>

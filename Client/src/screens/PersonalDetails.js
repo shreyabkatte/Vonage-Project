@@ -3,7 +3,6 @@ import Form from "../components/Form";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FROM_NUMBER } from "../properties";
 
 const fields = [
   {
@@ -11,13 +10,9 @@ const fields = [
     type: "text",
   },
   {
-    label: "Email Id",
-    type: "text",
-  },
-  {
     label: "Phone Number",
     type: "number",
-    name: "Phone",
+    // name: "Phone",
   },
   {
     label: "Address",
@@ -56,46 +51,65 @@ const successToast = (message) =>
 const onSubmit = (event, navigate) => {
   event.preventDefault();
   const name = event.target.elements[0].value;
-  const emailId = event.target.elements[1].value;
-  const phoneNumber = event.target.elements[2].value;
-  const address = event.target.elements[3].value;
-  const password = event.target.elements[4].value;
-  const confirmedPassword = event.target.elements[5].value;
-
-  // const password = event.target.elements[1].value;
-  //   const message = `Hello ${name}, Your number ${phoneNumber} have been successfully registered!`;
-  const message = `Registered!`;
-
-  const requestBody = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      virtualNumber: FROM_NUMBER,
-      toNumber: phoneNumber,
-      message: message,
-    }),
-  };
+  const phoneNumber = event.target.elements[1].value;
+  const address = event.target.elements[2].value;
+  const password = event.target.elements[3].value;
+  const confirmedPassword = event.target.elements[4].value;
 
   if (password === confirmedPassword) {
-    // fetch("http://localhost:3000/send", requestBody)
-    //   .then((res) => res.json())
-    //   .then((res) => {
-    //     if (res.messages[0]["status"] === "0") {
-    //       notify(
-    //         "Registration confirmation is sent to your number ending with 1086"
-    //       );
-    //       navigate("/success");
-    //     }
-    //   });
-    if (true) {
-      successToast(
-        "Registration confirmation is sent to your number ending with 1086"
-      );
-      setTimeout(() => navigate("/success"), 2000);
-    }
+    console.log("=====inside");
+    const resisterRequest = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        number: phoneNumber,
+        brand: "ICT",
+      }),
+    };
+
+    // navigate(`/verify/${phoneNumber}`);
+
+    fetch("http://localhost:3000/request", resisterRequest)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("register response is.....", res);
+        if (res.status === "0") {
+          setTimeout(
+            () => navigate(`/verify/${phoneNumber}/${res.request_id}/${name}`),
+            1000
+          );
+        } else {
+          errorToast("Something went wrong!");
+        }
+      })
+      .catch((err) => errorToast("Something went wrong!"));
   } else {
     errorToast("Please enter the right password!");
   }
+
+  // navigate(`/verify/${phoneNumber}`);
+
+  // if (password === confirmedPassword) {
+  //   fetch("http://localhost:3000/send", requestBody)
+  //     .then((res) => res.json())
+  //     .then((res) => {
+  //       if (res.messages[0]["status"] === "0") {
+  //         successToast(
+  //           "Registration confirmation is sent to your number ending with 1086"
+  //         );
+  //         setTimeout(() => navigate(`/verify/${phoneNumber}`), 2000);
+  //         navigate("/login");
+  //       }
+  //     });
+  //   if (true) {
+  //     successToast(
+  //       "Registration confirmation is sent to your number ending with 1086"
+  //     );
+  //     setTimeout(() => navigate("/success"), 2000);
+  //   }
+  // } else {
+  //   errorToast("Please enter the right password!");
+  // }
 };
 
 const PersonalDetails = () => {
@@ -107,6 +121,7 @@ const PersonalDetails = () => {
         fields={fields}
         onSubmit={(e) => onSubmit(e, navigate)}
         buttonLabel={"Submit"}
+        // linkTo="/login"
       />
       <ToastContainer style={{ width: "30%" }} />
     </div>
@@ -114,54 +129,3 @@ const PersonalDetails = () => {
 };
 
 export default PersonalDetails;
-
-// class Login extends React.Component {
-//   onSubmit = (event) => {
-//     event.preventDefault();
-//     console.log("=======>", event.target.elements[0].value);
-//     const name = event.target.elements[0].value;
-//     const emailId = event.target.elements[1].value;
-//     const phoneNumber = event.target.elements[2].value;
-//     const address = event.target.elements[3].value;
-//     const password = event.target.elements[4].value;
-//     const confirmedPassword = event.target.elements[5].value;
-
-//     // const password = event.target.elements[1].value;
-//     const message = `Hello ${name}, Your number ${phoneNumber} have been successfully registered!`;
-
-//     const requestBody = {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({
-//         virtualNumber: "33644633627",
-//         toNumber: phoneNumber,
-//         message: message,
-//       }),
-//     };
-//     console.log("outside confirm");
-//     if (password === confirmedPassword) {
-//       console.log("inside confirm");
-//       fetch("http://localhost:3000/send", requestBody)
-//         .then((res) => res.json())
-//         .then((res) => {
-//           if (res.messages[0]["status"] === "0") {
-//             notify();
-//           }
-//         });
-//     }
-//   };
-
-//   render() {
-//     return (
-//       <div>
-//         <Form
-//           fields={fields}
-//           onSubmit={this.onSubmit}
-//           buttonLabel={"Register"}
-//           //   linkTo={"/success"}
-//         />
-//         <ToastContainer />
-//       </div>
-//     );
-//   }
-// }

@@ -48,7 +48,7 @@ const submitStyle = {
 
 class Form extends React.Component {
   render() {
-    const { fields, onSubmit, buttonLabel, linkTo } = this.props;
+    const { fields, onSubmit, buttonLabel, linkTo, page } = this.props;
 
     return (
       <form style={formStyle} onSubmit={onSubmit}>
@@ -61,12 +61,23 @@ class Form extends React.Component {
                   type={item.type}
                   style={inputStyle}
                   required
-                  value={item.name === "Phone" ? FROM_NUMBER : null}
-                  disabled={item.name === "Phone" ? true : false}
+                  // value={item.name === "Phone" ? FROM_NUMBER : null}
+                  // disabled={item.name === "Phone" ? true : false}
                 />
               </div>
             );
           })}
+          {page === "verify" && (
+            <span
+              style={{
+                background: "linear-gradient(-45deg, #3db3c5, #274685)",
+                "-webkit-background-clip": "text",
+                "-webkit-text-fill-color": "transparent",
+              }}
+            >
+              Verification code is sent your mobile number!
+            </span>
+          )}
 
           {linkTo ? (
             <nav>
@@ -97,6 +108,30 @@ class Form extends React.Component {
               <button type="submit" style={submitStyle}>
                 {buttonLabel}
               </button>
+            </div>
+          )}
+          {page === "login" && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "10px",
+              }}
+            >
+              <span>{"To create an account "}</span>
+              <span>&nbsp;</span>
+              <Link
+                to={"/personal-details"}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textDecoration: "none",
+                }}
+                // onClick={(e) => onSubmit(e, navigate)}
+              >
+                <span>{"Click Here"}</span>
+              </Link>
             </div>
           )}
         </div>
