@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TO_NUMBER, FROM_NUMBER } from "../properties";
+import { FROM_NUMBER } from "../properties";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Doctor_avatar from "../img/Doctor.jpeg";
@@ -104,7 +104,7 @@ const doctors = [
   },
   {
     name: "Dr. Rina Paul",
-    phone: "98764672727",
+    phone: "33664061086",
     slots: ["9:30 AM", "10:30 AM", "2:00 PM"],
     specialization: "Retina Specialist",
     avatar: female,

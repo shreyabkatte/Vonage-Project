@@ -11,8 +11,8 @@ dotenv.config();
  * @author Shreya BALACHANDRA
  */
 const vonage = new Vonage({
-  apiKey: "4c2dcbbd",
-  apiSecret: "RIrUzpvTBGRQAj7p",
+  apiKey: process.env.API_KEY,
+  apiSecret: process.env.API_SECRET,
   applicationId: process.env.APPLICATION_ID,
   privateKey: Buffer.from(process.env.PRIVATE_KEY, "base64"),
 });
@@ -173,6 +173,7 @@ app.post("/call", (req, res) => {
  * @author Shreya BALACHANDRA
  */
 app.get("/proxy-call", (req, res) => {
+  console.log("Inside proxy-cal..", req.query);
   let ncco = [
     {
       action: "talk",
@@ -181,8 +182,9 @@ app.get("/proxy-call", (req, res) => {
     {
       action: "connect",
       from: process.env.VONAGE_NUMBER,
-      endpoint: [{ type: "phone", number: "33664061086" }],
+      endpoint: [{ type: "phone", number: req.query.toNumber }],
     },
   ];
+  console.log("ncco", ncco);
   res.json(ncco);
 });

@@ -1,5 +1,4 @@
 import React from "react";
-import { TO_NUMBER, FROM_NUMBER } from "../properties";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 
@@ -28,34 +27,6 @@ const submitStyle = {
   display: "block",
   height: "50px",
   cursor: "pointer",
-};
-
-const onSubmit = (event) => {
-  event.preventDefault();
-
-  const requestBody = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      to: [
-        {
-          type: "phone",
-          number: TO_NUMBER,
-        },
-      ],
-      from: {
-        type: "phone",
-        number: FROM_NUMBER,
-      },
-      ncco: [
-        {
-          action: "talk",
-          text: "Safely handling environment variables makes coding even more fun.",
-        },
-      ],
-    }),
-  };
-  fetch("http://localhost:3000/call", requestBody).then((res) => res.json());
 };
 
 /**
