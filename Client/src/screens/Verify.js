@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { FROM_NUMBER } from "../properties";
 import Header from "../components/Header";
 
+// Form fields for Verify page
 const fields = [
   {
     label: "Enter your 4 digit code",
@@ -13,6 +14,7 @@ const fields = [
   },
 ];
 
+// Error Toast message
 const errorToast = (message) =>
   toast.error(message, {
     position: "bottom-center",
@@ -22,7 +24,6 @@ const errorToast = (message) =>
     pauseOnHover: true,
     draggable: true,
   });
-
 const successToast = (message) =>
   toast.success(message, {
     position: "bottom-center",
@@ -33,6 +34,14 @@ const successToast = (message) =>
     draggable: true,
   });
 
+/**
+ * @name onSubmit
+ * @description This function allows the user to Verify the 4/6 difit code using Verify/check API.
+ * @param {object} event
+ * @param {object} navigate
+ * @param {object} params
+ * @author Shreya BALACHANDRA
+ */
 const onSubmit = (event, navigate, params) => {
   event.preventDefault();
   // parameters for verify/check API
@@ -49,6 +58,7 @@ const onSubmit = (event, navigate, params) => {
   let method = "POST";
   let headers = { "Content-Type": "application/json" };
 
+  // Verify/check API start
   const verifyRequest = {
     method: method,
     headers: headers,
@@ -98,8 +108,14 @@ const onSubmit = (event, navigate, params) => {
         errorToast("Incorrect PIN!");
       }
     });
+
+  // Verify/check API end
 };
 
+/**
+ * @description Main Login component used to display the Verify Form.
+ * @author Shreya BALACHANDRA
+ */
 const Verify = () => {
   let navigate = useNavigate();
   let params = useParams();

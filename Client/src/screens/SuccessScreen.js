@@ -24,50 +24,15 @@ const labelStyle = {
   marginLeft: "10px",
 };
 
-const onSubmit = (event, navigate) => {
-  event.preventDefault();
-
-  const requestBody = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      to: [
-        {
-          type: "phone",
-          number: TO_NUMBER,
-        },
-      ],
-      from: {
-        type: "phone",
-        number: FROM_NUMBER,
-      },
-      ncco: [
-        {
-          action: "talk",
-          text: "Safely handling environment variables makes coding even more fun.",
-        },
-      ],
-    }),
-  };
-  fetch("http://localhost:3000/call", requestBody).then((res) => res.json());
-  // .then((res) => {
-  //   if (res.messages[0]["status"] === "0") {
-  //     notify(
-  //       "Registration confirmation is sent to your number ending with 1086"
-  //     );
-  //     // navigate("/success");
-  //   }
-  // });
-};
-
+/**
+ * @description Main Success component used to display the Success page.
+ * @author Shreya BALACHANDRA
+ */
 const Success = ({ selectedObject, slot, username }) => {
   let navigate = useNavigate();
   let slotIndex = slot && slot["slotIndex"];
   let time = selectedObject && selectedObject["slots"][slotIndex];
   let name = selectedObject && selectedObject["name"];
-
-  console.log("slot is....", slot);
-  console.log("slot object is....", selectedObject);
 
   return (
     <div style={formStyle}>

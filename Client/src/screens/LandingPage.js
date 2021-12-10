@@ -58,7 +58,12 @@ const onSubmit = (event) => {
   fetch("http://localhost:3000/call", requestBody).then((res) => res.json());
 };
 
-const Success = () => {
+/**
+ * @description Main Success component used to display the Landing page.
+ * @author Shreya BALACHANDRA
+ */
+
+const LandingPage = () => {
   return (
     <div>
       <Header />
@@ -114,4 +119,4 @@ const Success = () => {
   );
 };
 
-export default Success;
+export default LandingPage;

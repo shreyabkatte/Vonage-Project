@@ -92,10 +92,12 @@ const inputStyle = {
   fontSize: "18px",
 };
 
+// List of doctors in the clinic
+
 const doctors = [
   {
     name: "Dr. Alexander Smith",
-    phone: "83738894948",
+    phone: "33664061086",
     slots: ["9:30 AM", "10:30 AM", "2:00 PM"],
     specialization: "Surgeon",
     avatar: male,
@@ -109,76 +111,72 @@ const doctors = [
   },
   {
     name: "Dr. Karthik Cheral House",
-    phone: "9686987977",
+    phone: "33695199771",
     slots: ["9:30 AM", "10:30 AM", "2:00 PM"],
     specialization: "General Consultation",
     avatar: male,
   },
 ];
 
-// const onCallClick = (event, navigate) => {
-//   event.preventDefault();
-
-//   const requestBody = {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       to: [
-//         {
-//           type: "phone",
-//           number: TO_NUMBER,
-//         },
-//       ],
-//       from: {
-//         type: "phone",
-//         number: FROM_NUMBER,
-//       },
-//       ncco: [
-//         {
-//           action: "talk",
-//           text: "Safely handling environment variables makes coding even more fun.",
-//         },
-//       ],
-//     }),
-//   };
-//   fetch("http://localhost:3000/call", requestBody).then((res) => res.json());
-// };
-
-// const onBookClick = (event, navigate) => {
-//   event.preventDefault();
-
-//   const requestBody = {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       virtualNumber: FROM_NUMBER,
-//       toNumber: "33664061086",
-//       message: "ABC",
-//     }),
-//   };
-
-//   fetch("http://localhost:3000/send", requestBody).then((res) => res.json());
-// };
+/**
+ * @name Home
+ * @description The main component of Home which renders on the screen.
+ * @author Shreya BALACHANDRA
+ */
 
 const Home = () => {
   let params = useParams();
   let navigate = useNavigate();
   const [dialog, setDialog] = useState(false);
+  const [calldialog, setCalldialog] = useState(false);
   const [selectedObject, setSelectedObject] = useState({});
   const [slot, setSlot] = useState({});
   const [submit, setSubmit] = useState(false);
   const [username, setUsername] = useState("");
 
+  // Function to open the dialog and set the selected object
   const openDialog = (e, index) => {
     setDialog(true);
     setSelectedObject(doctors[index]);
   };
 
+  /**
+   * @name onCallClick
+   * @description Allows to call the doctor by masking To and From number from each other.
+   * @param {object} event
+   * @param {object} index
+   * @author Shreya BALACHANDRA
+   */
+  const onCallClick = (event, index) => {
+    event.preventDefault();
+    setCalldialog(true);
+    const callRequest = {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      body: [
+        {
+          action: "talk",
+          text: "Please wait while we connect you",
+        },
+        {
+          action: "connect",
+          from: process.env.VONAGE_NUMBER,
+          endpoint: [{ type: "phone", number: doctors[index]["phone"] }],
+        },
+      ],
+    };
+    console.log("======>", doctors[index]["phone"]);
+    fetch(
+      `http://localhost:3000/proxy-call?toNumber=${doctors[index]["phone"]}`
+    ).then((res) => res.json());
+  };
+
+  // Sets the selected slot for selected Doctor
   const onSlotClick = (e, index) => {
-    console.log("=====>", index);
     setSlot({ [index]: !slot[index], name: true, slotIndex: index });
   };
 
+  // Error Toast Message
   const errorToast = (message) =>
     toast.error(message, {
       position: "bottom-center",
@@ -189,6 +187,15 @@ const Home = () => {
       draggable: true,
     });
 
+  /**
+   * @name onFormSubmit
+   * @description This function calls Vonage SMS Api and Voice API.
+   * @param {object} event
+   * @param {object} params
+   * @param {object} doctor
+   * @param {object} slotIndex
+   * @author Shreya BALACHANDRA
+   */
   const onFormSubmit = (event, params, doctor, slotIndex) => {
     const name = event.target.elements[0].value;
     const phoneNumber = params && params.phoneNo;
@@ -205,7 +212,6 @@ const Home = () => {
         message: message,
       }),
     };
-
     fetch("http://localhost:3000/send", messageRequest)
       .then((res) => res.json())
       .catch((err) =>
@@ -214,6 +220,7 @@ const Home = () => {
 
     /* SMS API end*/
 
+    /* Voice API Start*/
     const callRequest = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -242,6 +249,7 @@ const Home = () => {
         console.log("call response.....", res);
       })
       .catch((error) => errorToast("Something went wrong in call!"));
+    /* Voice API end*/
 
     setSubmit(true);
     setUsername(name);
@@ -251,7 +259,7 @@ const Home = () => {
   return (
     <div>
       <ToastContainer style={{ width: "30%" }} />
-      <Header style={{ width: submit ? "400px" : "600px" }} />
+      <Header style={{ width: submit ? "440px" : "600px" }} />
 
       {submit ? (
         <Success
@@ -283,7 +291,6 @@ const Home = () => {
                     <span style={{ marginBottom: "10px", ...fontStyle }}>
                       {item.specialization}
                     </span>
-                    <span>{item.phone}</span>
                     <div style={{ display: "flex" }}>
                       <div
                         onClick={(e) => openDialog(e, index)}
@@ -300,7 +307,7 @@ const Home = () => {
                         </button>
                       </div>
                       <div
-                        // onClick={(e) => (e, index)}
+                        onClick={(e) => onCallClick(e, index)}
                         style={{
                           display: "flex",
                           alignItems: "center",
@@ -317,27 +324,6 @@ const Home = () => {
                 </div>
               );
             })}
-
-            {/* <div style={{ display: "flex" }}>
-        <img src={Doctor_avatar} width="30%" />
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <span>Dr. Rina Paul</span>
-          <span>98764672727</span>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textDecoration: "none",
-              marginRight: "20px",
-            }}
-          >
-            <button type="submit" style={submitStyle}>
-              {"Book Now"}
-            </button>
-          </div>
-        </div>
-      </div> */}
           </div>
           <Dialog
             onClose={() => {
@@ -406,6 +392,28 @@ const Home = () => {
                 </div>
               </form>
             )}
+          </Dialog>
+          {/* Dialog raise over Call Click */}
+          <Dialog
+            onClose={() => {
+              setCalldialog(false);
+            }}
+            open={calldialog}
+          >
+            <DialogTitle
+              style={{
+                background: "linear-gradient(-45deg, #3db3c5, #274685)",
+                "-webkit-background-clip": "text",
+                "-webkit-text-fill-color": "transparent",
+                fontSize: "30px",
+                fontWeight: "bold",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {`Please call +${FROM_NUMBER}`}
+            </DialogTitle>
           </Dialog>
         </div>
       )}

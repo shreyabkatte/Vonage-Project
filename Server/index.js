@@ -5,6 +5,11 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+/**
+ * @description Vonage object creation with all the secret keys configured.
+ * @param {object} object
+ * @author Shreya BALACHANDRA
+ */
 const vonage = new Vonage({
   apiKey: "4c2dcbbd",
   apiSecret: "RIrUzpvTBGRQAj7p",
@@ -28,7 +33,13 @@ app.listen(3000, () => {
   console.log("Server listening at http://localhost:3000");
 });
 
-// SMS API
+/**
+ * @name SMSApi
+ * @description Sends an SMS with the specified text message.
+ * @param req
+ * @param res
+ * @author Shreya BALACHANDRA
+ */
 app.post("/send", (req, res) => {
   const from = req.body.virtualNumber;
   const to = req.body.toNumber;
@@ -59,7 +70,13 @@ app.post("/send", (req, res) => {
   );
 });
 
-// Verify Request
+/**
+ * @name Verify-Request
+ * @description 4 digit/6digit code is requested and sent to the mobile number.
+ * @param req
+ * @param res
+ * @author Shreya BALACHANDRA
+ */
 app.post("/request", (req, res) => {
   // Verify code
   vonage.verify.request(
@@ -85,7 +102,13 @@ app.post("/request", (req, res) => {
   );
 });
 
-// Verify Check
+/**
+ * @name Verify-Check
+ * @description 4 digit code received to verified using this API.
+ * @param req
+ * @param res
+ * @author Shreya BALACHANDRA
+ */
 app.post("/check", (req, res) => {
   //To verify the phone number the request ID and code are required.
   let code = req.body.code;
@@ -111,7 +134,13 @@ app.post("/check", (req, res) => {
   });
 });
 
-// Voice API (Text to speech)
+/**
+ * @name Voice-API
+ * @description Voice Text-to-Speech .
+ * @param req
+ * @param res
+ * @author Shreya BALACHANDRA
+ */
 app.post("/call", (req, res) => {
   let to = req.body.to;
   let from = req.body.from;
@@ -134,4 +163,26 @@ app.post("/call", (req, res) => {
       }
     }
   );
+});
+
+/**
+ * @name Voice-proxy
+ * @description Masks to and from number from each other and uses Virtual number for calling .
+ * @param req
+ * @param res
+ * @author Shreya BALACHANDRA
+ */
+app.get("/proxy-call", (req, res) => {
+  let ncco = [
+    {
+      action: "talk",
+      text: "Please wait while we connect you",
+    },
+    {
+      action: "connect",
+      from: process.env.VONAGE_NUMBER,
+      endpoint: [{ type: "phone", number: "33664061086" }],
+    },
+  ];
+  res.json(ncco);
 });

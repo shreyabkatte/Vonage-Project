@@ -67,6 +67,17 @@ class Form extends React.Component {
               </div>
             );
           })}
+          {page === "register" && (
+            <span
+              style={{
+                background: "linear-gradient(-45deg, #3db3c5, #274685)",
+                "-webkit-background-clip": "text",
+                "-webkit-text-fill-color": "transparent",
+              }}
+            >
+              e.g 33657382982
+            </span>
+          )}
           {page === "verify" && (
             <span
               style={{

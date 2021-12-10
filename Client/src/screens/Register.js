@@ -15,10 +15,11 @@ const errorToast = (message) =>
   });
 
 /**
- * @name Shreya
+ * @name onRegisterSubmit
  * @description This function is called on Register button click. It makes a request to Vonage verify/request API.
  * @param {object} event
  * @param {object} navigate
+ * @author Shreya BALACHANDRA
  */
 
 const onRegisterSubmit = (event, navigate) => {
@@ -31,7 +32,7 @@ const onRegisterSubmit = (event, navigate) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       number: phoneNumber,
-      brand: "ICT",
+      brand: "Optho Clinic",
     }),
   };
 
@@ -52,7 +53,6 @@ const onRegisterSubmit = (event, navigate) => {
 };
 
 /**
- * @name Shreya
  * @description Main Register component used to display the Form.
  */
 
@@ -73,6 +73,7 @@ const Register = () => {
         fields={registerFields}
         onSubmit={(e) => onRegisterSubmit(e, navigate)}
         buttonLabel={"Register"}
+        page={"register"}
       />
     </div>
   );
